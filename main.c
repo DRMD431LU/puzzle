@@ -21,46 +21,139 @@ void iniciar_tablero();
 int rellenar_tablero();
 int generar_aleatorio(int aleatorio);
 void mover_pieza();
+void imprimir_tablero();
 int verificar_juego();
 void terminar_juego();
 
-const int tablero_ganador[]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
+const int tablero_ganador[4][4]={{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
 int tablero[4][4];
 int ganador=0;
+
 
 void menu(){
     ;
 }
 int main(){
     srand(time(NULL));
-    int tablero_longitud = sizeof(tablero_ganador)/sizeof(int);
     menu();
     limpiar_tablero();
     iniciar_tablero();
-    while(~ganador){
-        mover_pieza();
-        /*ganador=verificar_juego();
+    imprimir_tablero();
+    mover_pieza();
+    return 0;
+}
+void imprimir_tablero(){
+    int y=0,x=0;
+    for(y;y<4;y++){
+        x=0;
+        for(x;x<4;x++){
+            if(tablero[y][x]!=0){
+                printf("[%2i]",tablero[y][x]);}
+            else{
+                printf("[  ]");
+            }
+            }
+        printf("\n");
+        }
+}
+void mover_pieza(){
+    int x = 3, y = 3;
+    int movs=0;
+    char enter,caracter;
+    do{
+        caracter=getchar();
+        enter=getchar();
+        switch(caracter){
+            case 'w'://arriba
+                if(y<=2){
+                    //movimiento de ficha
+                    tablero[y][x]=tablero[y+1][x];
+                    tablero[y+1][x]=0;
+                    y++;
+                    imprimir_tablero();
+                }
+                else{
+                    printf("fuera de los limites\n");
+                }
+                break;
+            case 's'://abajo
+                if(y>=1){
+                    //movimiento de ficha
+                    tablero[y][x]=tablero[y-1][x];
+                    tablero[y-1][x]=0;
+                    y--;
+                    imprimir_tablero();
+                }
+                else{
+                    printf("fuera de los limites\n");
+                }
+                break;
+            case 'a'://izquierda
+                if(x<=2){
+                    //movimiento de ficha
+                    tablero[y][x]=tablero[y][x+1];
+                    tablero[y][x+1]=0;
+                    x++;
+                    imprimir_tablero();
+                }
+                else{
+                    printf("fuera de los limites\n");
+                }
+                break;
+            case 'd'://derecha
+                if(x>=1){
+                    //movimiento de ficha
+                    tablero[y][x]=tablero[y][x-1];
+                    tablero[y][x-1]=0;
+                    x--;
+                    imprimir_tablero();
+
+                }
+                else{
+                    printf("fuera de los limites\n");
+                }
+                break;
+            case'0'://salida
+                break;
+            default:
+                printf("caracter incorrecto");
+                break;}
+        printf("%c \n",caracter);
+        movs++;
+        ganador=verificar_juego();
         if(ganador){
-            terminar_juego();
-        }*/
-        break;
+            terminar_juego(movs);
+        }
+    }
+    while(caracter!='0');
+}
+
+int verificar_juego(){
+    int x=0,y=0;
+    int contador_ganador=0;
+    for(y;y<4;y++){
+        x=0;
+        for(x=0;x<4;x++){
+            if(tablero_ganador[y][x]==tablero[y][x]){
+                contador_ganador++;
+            }
+        }
+    }
+    if (contador_ganador==16){
+        return 1;
     }
     return 0;
 }
-void mover_pieza(){
-    int swap =0;
-    int x = 3, y = 3;
-    swap = tablero[x][y-1];
-    tablero[x][y-1] = tablero[x][y];
-    tablero[x][y] = swap;
+void terminar_juego(movs){
+    printf("Ganaste El juego >:v9 en: %d movimientos.", movs);
+    menu();
 }
-
 void limpiar_tablero(){
-    int y=0;
-    for(int x=0;x<4;x++){
-        y=0;
-        for(y;y<4;y++){
-            tablero[x][y] = -1;
+    int x=0;
+    for(int y=0;y<4;y++){
+        x=0;
+        for(x;x<4;x++){
+            tablero[y][x] = -1;
         }
     }
 }
@@ -81,13 +174,13 @@ int buscar_valor(){
     int y=0;
     int x=0;
     while(1){
-        x=0;
+        y=0;
         contador=0;
         aleatorio=generar_aleatorio(aleatorio);
-        for(x;x<4;x++){
-            y=0;
-            for(y;y<4;y++){
-                if(tablero[x][y]!=aleatorio){
+        for(y;y<4;y++){
+            x=0;
+            for(x;x<4;x++){
+                if(tablero[y][x]!=aleatorio){
                     contador+=1;
                     if (contador>15){
                         probable=aleatorio;
@@ -100,21 +193,18 @@ int buscar_valor(){
 }
 
 void iniciar_tablero(){
-    int y=0;
+    int x=0;
     int rellenador = 0;
-    for(int x=0;x<4;x++){
-        y=0;
-        for(y;y<4;y++){
+    for(int y=0;y<4;y++){
+        x=0;
+        for(x;x<4;x++){
             if(rellenador>14){
-                tablero[x][y] = 0;
-                printf("[%2i]", tablero[x][y]);
+                tablero[y][x] = 0;
             }
             else {
-                tablero[x][y] = rellenar_tablero();
-                printf("[%2i]", tablero[x][y]);
+                tablero[y][x] = rellenar_tablero();
                 rellenador++;
             }
         }
-        printf("\n");
     }
 }
